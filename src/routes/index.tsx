@@ -15,17 +15,78 @@ export const Route = createFileRoute("/")({
 });
 
 type Stage = "loading" | "intro" | "q1" | "q2" | "final";
+const ORDER: Stage[] = ["loading", "intro", "q1", "q2", "final"];
 
 function Index() {
   const [stage, setStage] = useState<Stage>("loading");
+  const [anim, setAnim] = useState<"in" | "out">("in");
+  const pendingRef = useRef<Stage | null>(null);
+
+  const go = (next: Stage) => {
+    pendingRef.current = next;
+    setAnim("out");
+    setTimeout(() => {
+      setStage(next);
+      setAnim("in");
+    }, 350);
+  };
+
+  const goPrev = () => {
+    const idx = ORDER.indexOf(stage);
+    if (idx > 1) go(ORDER[idx - 1]); // skip back to loading
+  };
+
+  const transitionClass =
+    anim === "in"
+      ? "opacity-100 translate-y-0 scale-100"
+      : "opacity-0 translate-y-4 scale-95";
 
   return (
     <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-pink-100 via-rose-50 to-amber-50 text-rose-900">
-      {stage === "loading" && <Loading onDone={() => setStage("intro")} />}
-      {stage === "intro" && <Intro onNext={() => setStage("q1")} />}
-      {stage === "q1" && <Question1 onYes={() => setStage("q2")} />}
-      {stage === "q2" && <Question2 onYes={() => setStage("final")} />}
-      {stage === "final" && <FinalPage />}
+      <style>{`
+        @keyframes floaty {
+          0%, 100% { transform: translateY(0px) rotate(2deg); }
+          50% { transform: translateY(-14px) rotate(2deg); }
+        }
+        @keyframes cakeFloat {
+          0%, 100% { transform: translateY(0px) rotate(12deg); }
+          50% { transform: translateY(-8px) rotate(14deg); }
+        }
+        .float-photo { animation: floaty 4.5s ease-in-out infinite; }
+        .float-cake { animation: cakeFloat 3.5s ease-in-out infinite; }
+      `}</style>
+
+      <div
+        className={`transition-all duration-300 ease-out ${transitionClass}`}
+      >
+        {stage === "loading" && <Loading onDone={() => go("intro")} />}
+        {stage === "intro" && <Intro onNext={() => go("q1")} />}
+        {stage === "q1" && <Question1 onYes={() => go("q2")} />}
+        {stage === "q2" && <Question2 onYes={() => go("final")} />}
+        {stage === "final" && <FinalPage />}
+      </div>
+
+      {stage !== "loading" && stage !== "intro" && (
+        <button
+          onClick={goPrev}
+          aria-label="Previous"
+          className="fixed bottom-5 left-5 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-rose-600 shadow-lg ring-1 ring-rose-200 backdrop-blur transition-transform hover:scale-110 hover:bg-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
@@ -70,7 +131,6 @@ function Loading({ onDone }: { onDone: () => void }) {
           height={320}
           className="w-64 md:w-80 drop-shadow-2xl"
         />
-        {/* Candle flames overlay */}
         <div className="absolute left-1/2 top-[18%] flex -translate-x-1/2 gap-6">
           {[0, 1, 2].map((i) => (
             <span
@@ -122,7 +182,7 @@ function Intro({ onNext }: { onNext: () => void }) {
   );
 }
 
-/* ---------- Question 1: How much do you love me ---------- */
+/* ---------- Question 1 ---------- */
 function Question1({ onYes }: { onYes: () => void }) {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const btnRef = useRef<HTMLButtonElement | null>(null);
@@ -189,7 +249,7 @@ function Question1({ onYes }: { onYes: () => void }) {
   );
 }
 
-/* ---------- Question 2: Will you marry me ---------- */
+/* ---------- Question 2 ---------- */
 function Question2({ onYes }: { onYes: () => void }) {
   const [noPos, setNoPos] = useState({ x: 0, y: 0 });
 
@@ -233,11 +293,71 @@ function Question2({ onYes }: { onYes: () => void }) {
   );
 }
 
-/* ---------- Final page: photo frame + cake + message ---------- */
+/* ---------- Happy Birthday melody via Web Audio ---------- */
+function useHappyBirthday() {
+  useEffect(() => {
+    const AC =
+      (window as unknown as { AudioContext: typeof AudioContext; webkitAudioContext?: typeof AudioContext })
+        .AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new AC();
+    let stopped = false;
+
+    // Happy Birthday melody (note, beats)
+    const N = (n: string) => {
+      const map: Record<string, number> = {
+        C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23,
+        G4: 392.0, A4: 440.0, Bb4: 466.16, B4: 493.88,
+        C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46,
+      };
+      return map[n];
+    };
+    const melody: [string, number][] = [
+      ["C4", 0.75], ["C4", 0.25], ["D4", 1], ["C4", 1], ["F4", 1], ["E4", 2],
+      ["C4", 0.75], ["C4", 0.25], ["D4", 1], ["C4", 1], ["G4", 1], ["F4", 2],
+      ["C4", 0.75], ["C4", 0.25], ["C5", 1], ["A4", 1], ["F4", 1], ["E4", 1], ["D4", 2],
+      ["Bb4", 0.75], ["Bb4", 0.25], ["A4", 1], ["F4", 1], ["G4", 1], ["F4", 2],
+    ];
+
+    const play = () => {
+      const tempo = 0.38; // seconds per beat
+      let t = ctx.currentTime + 0.1;
+      melody.forEach(([note, beats]) => {
+        const dur = beats * tempo;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.value = N(note);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.18, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + dur);
+        t += dur;
+      });
+      const totalMs = (t - ctx.currentTime) * 1000;
+      if (!stopped) setTimeout(play, totalMs + 800);
+    };
+
+    const start = () => {
+      ctx.resume().then(play);
+    };
+    start();
+
+    return () => {
+      stopped = true;
+      ctx.close().catch(() => {});
+    };
+  }, []);
+}
+
+/* ---------- Final page ---------- */
 function FinalPage() {
+  useHappyBirthday();
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden px-6 py-12 md:px-16 animate-fade-in">
-      {/* floating hearts */}
       <div className="pointer-events-none absolute inset-0 -z-0">
         {Array.from({ length: 14 }).map((_, i) => (
           <span
@@ -259,7 +379,6 @@ function FinalPage() {
       </h1>
 
       <div className="relative z-10 mt-12 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
-        {/* Left: message */}
         <div className="order-2 md:order-1 space-y-6 md:pr-8">
           <p className="whitespace-pre-line text-lg md:text-xl leading-relaxed text-rose-800">
             {`Happy Birthday, my love! ❤️
@@ -275,10 +394,9 @@ Enjoy your special day, my queen! 🎂🎉❤️`}
           </p>
         </div>
 
-        {/* Right: photo frame with cake overlay */}
         <div className="order-1 md:order-2 flex justify-center md:justify-end">
-          <div className="relative">
-            <div className="rounded-3xl border-[10px] border-white bg-white p-2 shadow-2xl shadow-rose-300/60 rotate-2">
+          <div className="relative float-photo">
+            <div className="rounded-3xl border-[10px] border-white bg-white p-2 shadow-2xl shadow-rose-300/60">
               <img
                 src={dainastaImg.url}
                 alt="Dainasta"
@@ -286,14 +404,13 @@ Enjoy your special day, my queen! 🎂🎉❤️`}
               />
             </div>
 
-            {/* Cake overlay bottom-right, tilted */}
             <img
               src={cakeSmallImg}
               alt="Birthday cake"
               width={200}
               height={200}
               loading="lazy"
-              className="absolute -bottom-10 -right-10 w-36 md:w-44 rotate-12 drop-shadow-2xl"
+              className="float-cake absolute -bottom-10 -right-10 w-36 md:w-44 drop-shadow-2xl"
             />
           </div>
         </div>
