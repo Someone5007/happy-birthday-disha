@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "happy birthday disha" },
+      { name: "description", content: "Birthday Surprise creates an interactive, personalized birthday website experience." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "happy birthday disha" },
+      { property: "og:description", content: "Birthday Surprise creates an interactive, personalized birthday website experience." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "happy birthday disha" },
+      { name: "twitter:description", content: "Birthday Surprise creates an interactive, personalized birthday website experience." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3e850827-c5b5-4248-96a2-c00577e5ae1c/id-preview-eb1e092e--a872840f-0e7b-48fe-95ad-0527258d28e7.lovable.app-1782384131077.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3e850827-c5b5-4248-96a2-c00577e5ae1c/id-preview-eb1e092e--a872840f-0e7b-48fe-95ad-0527258d28e7.lovable.app-1782384131077.png" },
     ],
     links: [
       {
