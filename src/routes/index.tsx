@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import cakeImg from "@/assets/cake.png";
 import cakeSmallImg from "@/assets/cake-small.png";
+import dainastaImg from "@/assets/dainasta.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
