@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import cakeImg from "@/assets/cake.png";
 import cakeSmallImg from "@/assets/cake-small.png";
+import dainastaImg from "@/assets/dainasta.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -232,7 +233,7 @@ function Question2({ onYes }: { onYes: () => void }) {
   );
 }
 
-/* ---------- Final page: photo frame + cake + quote ---------- */
+/* ---------- Final page: photo frame + cake + message ---------- */
 function FinalPage() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden px-6 py-12 md:px-16 animate-fade-in">
@@ -258,19 +259,19 @@ function FinalPage() {
       </h1>
 
       <div className="relative z-10 mt-12 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
-        {/* Left: quote */}
+        {/* Left: message */}
         <div className="order-2 md:order-1 space-y-6 md:pr-8">
-          <p className="text-2xl md:text-3xl font-serif italic leading-relaxed text-rose-800">
-            “In a world full of ordinary days, you make every single moment feel
-            like a celebration. Today the world celebrates you — but for me,
-            every day with you already feels like your birthday.”
-          </p>
-          <p className="text-lg text-rose-700/80">
-            Wishing you a year filled with laughter, love, and all the cake your
-            heart desires. You are my favorite person, today and always. 💕
+          <p className="whitespace-pre-line text-lg md:text-xl leading-relaxed text-rose-800">
+            {`Happy Birthday, my love! ❤️
+
+To my beautiful girl, today is all about celebrating you. You make my world brighter just by being in it, and I'm so grateful for every smile, every laugh, and every moment we share. I hope this year brings you as much happiness as you've given me. You deserve all the love, joy, and success in the world.
+
+I love you endlessly, and I'm so blessed to call you mine.
+
+Enjoy your special day, my queen! 🎂🎉❤️`}
           </p>
           <p className="text-xl font-semibold text-rose-600">
-            — Yours, forever ✨
+            — your sweet boy rezaul
           </p>
         </div>
 
@@ -278,13 +279,11 @@ function FinalPage() {
         <div className="order-1 md:order-2 flex justify-center md:justify-end">
           <div className="relative">
             <div className="rounded-3xl border-[10px] border-white bg-white p-2 shadow-2xl shadow-rose-300/60 rotate-2">
-              <div className="flex h-80 w-72 md:h-96 md:w-80 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-100 to-pink-200 text-center text-rose-400">
-                <span className="px-6 text-sm">
-                  📷 Your photo goes here
-                  <br />
-                  <span className="text-xs opacity-70">(attach later)</span>
-                </span>
-              </div>
+              <img
+                src={dainastaImg.url}
+                alt="Dainasta"
+                className="h-80 w-72 md:h-96 md:w-80 rounded-2xl object-cover"
+              />
             </div>
 
             {/* Cake overlay bottom-right, tilted */}
