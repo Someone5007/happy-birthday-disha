@@ -279,13 +279,11 @@ function FinalPage() {
         <div className="order-1 md:order-2 flex justify-center md:justify-end">
           <div className="relative">
             <div className="rounded-3xl border-[10px] border-white bg-white p-2 shadow-2xl shadow-rose-300/60 rotate-2">
-              <div className="flex h-80 w-72 md:h-96 md:w-80 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-100 to-pink-200 text-center text-rose-400">
-                <span className="px-6 text-sm">
-                  📷 Your photo goes here
-                  <br />
-                  <span className="text-xs opacity-70">(attach later)</span>
-                </span>
-              </div>
+              <img
+                src={dainastaImg.url}
+                alt="Dainasta"
+                className="h-80 w-72 md:h-96 md:w-80 rounded-2xl object-cover"
+              />
             </div>
 
             {/* Cake overlay bottom-right, tilted */}
